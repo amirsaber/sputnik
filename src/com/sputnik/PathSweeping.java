@@ -7,7 +7,7 @@ import lejos.robotics.subsumption.Behavior;
 public class PathSweeping implements Behavior {
 
 	private static boolean suppressed = false;
-	public static boolean intersection = false;
+	public static boolean intersection = true;
 	public static boolean ball = false;
 
 	@Override
@@ -23,21 +23,23 @@ public class PathSweeping implements Behavior {
 	public void action() {
 		// TODO Auto-generated method stub
 		while (!suppressed) {
-			Sputnik.opp.setPose(new Pose(Sputnik.opp.getPose().getX(),Sputnik.opp.getPose().getY(),0));
+			Sputnik.opp.setPose(new Pose(Sputnik.opp.getPose().getX(),
+					Sputnik.opp.getPose().getY(), 0));
 			align();
-			Sputnik.opp.setPose(new Pose(Sputnik.opp.getPose().getX(),Sputnik.opp.getPose().getY(),0));
+			Sputnik.opp.setPose(new Pose(Sputnik.opp.getPose().getX(),
+					Sputnik.opp.getPose().getY(), 0));
 			sweep();
 			Sputnik.pilot.stop();
-			Sputnik.opp.setPose(new Pose(Sputnik.opp.getPose().getX(),Sputnik.opp.getPose().getY(),0));
+			Sputnik.opp.setPose(new Pose(Sputnik.opp.getPose().getX(),
+					Sputnik.opp.getPose().getY(), 0));
 			move();
 			Sputnik.pilot.stop();
 		}
-		suppressed=false;
+		suppressed = false;
 	}
 
-	public static void sweep() {
+	public void sweep() {
 		// sweep left
-		float beforeLeftSweepAngle = Sputnik.opp.getPose().getHeading();
 		Sputnik.pilot.rotate(90, true);
 		while (Sputnik.pilot.isMoving()) {
 			if (suppressed) {
@@ -50,7 +52,6 @@ public class PathSweeping implements Behavior {
 		float leftAngle = Sputnik.opp.getPose().getHeading();
 		Sputnik.pilot.rotate(-leftAngle);
 		// sweep right
-		float beforeRightSweepAngle = Sputnik.opp.getPose().getHeading();
 		Sputnik.pilot.rotate(-90, true);
 		while (Sputnik.pilot.isMoving()) {
 			if (suppressed) {
@@ -67,7 +68,7 @@ public class PathSweeping implements Behavior {
 			float alignAngle = (rightAngle + leftAngle) / 2;
 			Sputnik.pilot.rotate(alignAngle);
 		} else {
-			RConsole.println("Angle intersection");
+			System.out.println("Angle");
 			intersection = true;
 			Sputnik.pilot.travel(73, true);
 			while (Sputnik.pilot.isMoving()) {
@@ -85,50 +86,54 @@ public class PathSweeping implements Behavior {
 			Thread.yield();
 		}
 	}
-	
-	public static  void align() {
-		if(Sputnik.lightSensor.getLightValue()<Sputnik.lightThreshold) {
+
+	public void align() {
+		if (Sputnik.lightSensor.getLightValue() < Sputnik.lightThreshold) {
 			return;
 		}
-		float firstAngle=0;
-		float secondAngle=0;
+		float firstAngle = 0;
+		float secondAngle = 0;
 		Sputnik.pilot.rotate(70, true);
-		while(Sputnik.pilot.isMoving()) {
-			if(firstAngle==0 && Sputnik.lightSensor.getLightValue()<Sputnik.lightThreshold) {
-				firstAngle=Sputnik.opp.getPose().getHeading();
+		while (Sputnik.pilot.isMoving()) {
+			if (firstAngle == 0
+					&& Sputnik.lightSensor.getLightValue() < Sputnik.lightThreshold) {
+				firstAngle = Sputnik.opp.getPose().getHeading();
 			}
-			if(firstAngle!=0 && Sputnik.lightSensor.getLightValue()>Sputnik.lightThreshold) {
+			if (firstAngle != 0
+					&& Sputnik.lightSensor.getLightValue() > Sputnik.lightThreshold) {
 				Sputnik.pilot.stop();
-				secondAngle=Sputnik.opp.getPose().getHeading();
+				secondAngle = Sputnik.opp.getPose().getHeading();
 			}
 		}
-		RConsole.println("First: "+firstAngle+" Second: "+secondAngle);
-		if(firstAngle!=0 && secondAngle!=0) {
-			float averageAngle=(firstAngle+secondAngle)/2;
-			float currentAngle=Sputnik.opp.getPose().getHeading();
-			Sputnik.pilot.rotate(averageAngle-currentAngle);
-			RConsole.println("current: "+currentAngle);
+		RConsole.println("First: " + firstAngle + " Second: " + secondAngle);
+		if (firstAngle != 0 && secondAngle != 0) {
+			float averageAngle = (firstAngle + secondAngle) / 2;
+			float currentAngle = Sputnik.opp.getPose().getHeading();
+			Sputnik.pilot.rotate(averageAngle - currentAngle);
+			RConsole.println("current: " + currentAngle);
 			return;
 		}
-		firstAngle=0;
-		secondAngle=0;
+		firstAngle = 0;
+		secondAngle = 0;
 		Sputnik.pilot.rotate(-70);
 		Sputnik.pilot.rotate(-70, true);
-		while(Sputnik.pilot.isMoving()) {
-			if(firstAngle==0 && Sputnik.lightSensor.getLightValue()<Sputnik.lightThreshold) {
-				firstAngle=Sputnik.opp.getPose().getHeading();
+		while (Sputnik.pilot.isMoving()) {
+			if (firstAngle == 0
+					&& Sputnik.lightSensor.getLightValue() < Sputnik.lightThreshold) {
+				firstAngle = Sputnik.opp.getPose().getHeading();
 			}
-			if(firstAngle!=0 && Sputnik.lightSensor.getLightValue()>Sputnik.lightThreshold) {
+			if (firstAngle != 0
+					&& Sputnik.lightSensor.getLightValue() > Sputnik.lightThreshold) {
 				Sputnik.pilot.stop();
-				secondAngle=Sputnik.opp.getPose().getHeading();
+				secondAngle = Sputnik.opp.getPose().getHeading();
 			}
 		}
-		RConsole.println("First: "+firstAngle+" Second: "+secondAngle);
-		if(firstAngle!=0 && secondAngle!=0) {
-			float averageAngle=(firstAngle+secondAngle)/2;
-			float currentAngle=Sputnik.opp.getPose().getHeading();
-			Sputnik.pilot.rotate(averageAngle-currentAngle);
-			RConsole.println("current: "+currentAngle);
+		RConsole.println("First: " + firstAngle + " Second: " + secondAngle);
+		if (firstAngle != 0 && secondAngle != 0) {
+			float averageAngle = (firstAngle + secondAngle) / 2;
+			float currentAngle = Sputnik.opp.getPose().getHeading();
+			Sputnik.pilot.rotate(averageAngle - currentAngle);
+			RConsole.println("current: " + currentAngle);
 			return;
 		}
 	}

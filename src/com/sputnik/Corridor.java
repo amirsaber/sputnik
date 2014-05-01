@@ -2,7 +2,7 @@ package com.sputnik;
 
 public class Corridor {
 	private Node node1;
-	private int weight=1;
+	private int weight = 1;
 
 	public Corridor() {
 

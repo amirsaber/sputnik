@@ -70,12 +70,12 @@ public class Map {
 				if (mapNode[i][j].equals(current)) {
 					result += "R\t";
 				} else if (mapNode[i][j].equals(destination)) {
-					result += mapNode[i][j].getStatus()+"G\t";
+					result += mapNode[i][j].getStatus() + "G\t";
 				} else {
 					int k = 0;
 					for (k = 0; k < path.length; k++) {
 						if (path[k].equals(mapNode[i][j])) {
-							result += mapNode[i][j].getStatus()+"*\t";
+							result += mapNode[i][j].getStatus() + "*\t";
 							break;
 						}
 					}
@@ -98,33 +98,76 @@ public class Map {
 		return result;
 	}
 
+	public void makeMapClass() {
+		for (int i = 0; i < this.width; i++) {
+			for (int j = 0; j < this.height; j++) {
+				if (i == 0 && j == this.height-1) {
+					for (int k = 0; k < 4; k++) {
+						mapNode[i][j].getCorridor(k).setWeight(9999);
+						if (mapNode[i][j].getCorridor(k).getNode() != null) {
+							mapNode[i][j].getCorridor(k).getNode()
+									.getCorridor((k + 2) % 4).setWeight(9999);
+						}
+						mapNode[i][j].setStatus(4);
+					}
+					System.out.println("BS: " + i + "," + j);
+				}
+				if(j == 2 && i == 0){
+					mapNode[i][j].setStatus(0);
+					continue;
+				}
+				if(j == 2 && i == 3){
+					mapNode[i][j].setStatus(0);
+					continue;
+				}
+				if (i == 0 || i == this.width - 1 || j == 0
+						|| j == this.height - 1) {
+					mapNode[i][j].setStatus(1);
+					continue;
+				}
+				if (i == 1 && j == 2) {
+					mapNode[i][j].setStatus(5);
+					continue;
+				}
+				if (i == 2 && j == 2) {
+					mapNode[i][j].setStatus(5);
+					continue;
+				}
+				if (i == 1 && j == 3) {
+					mapNode[i][j].setStatus(5);
+					continue;
+				}
+				for (int k = 0; k < 4; k++) {
+					mapNode[i][j].getCorridor(k).setWeight(9999);
+					mapNode[i][j].getCorridor(k).getNode()
+							.getCorridor((k + 2) % 4).setWeight(9999);
+					mapNode[i][j].setStatus(1);
+				}
+				System.out.println("B: " + i + "," + j);
+			}
+		}
+	}
+
 	public void setBall() {
 		int x = current.getCordinates()[0];
 		int y = current.getCordinates()[1];
 		mapNode[x][y].setStatus(2);
 		/*
-		for (int i = 0; i < width; i++) {
-			for (int j = 0; j < height; j++) {
-				if (mapNode[i][j].getStatus() == 2) {
-					continue;
-				}
-				if (i == x || y == j) {
-					mapNode[i][j].setStatus(3);
-				}
-				if (Math.abs(i - x) == Math.abs(j - y)) {
-					mapNode[i][j].setStatus(3);
-				}
-			}
-		}*/
+		 * for (int i = 0; i < width; i++) { for (int j = 0; j < height; j++) {
+		 * if (mapNode[i][j].getStatus() == 2) { continue; } if (i == x || y ==
+		 * j) { mapNode[i][j].setStatus(3); } if (Math.abs(i - x) == Math.abs(j
+		 * - y)) { mapNode[i][j].setStatus(3); } } }
+		 */
 	}
 
 	public int getNextHeading() {
 		while (true) {
 			Node nextNode = getNextNode();
-			if(nextNode==null){
+			if (nextNode == null) {
 				destination.setStatus(3);
 				continue;
 			}
+			System.out.println("ND:" + nextNode.getCordinates()[0] + "," + nextNode.getCordinates()[1] + " > " + nextNode.getStatus());
 			if (nextNode.getCordinates()[0] > current.getCordinates()[0]) {
 				return 3;
 			} else if (nextNode.getCordinates()[0] < current.getCordinates()[0]) {
@@ -143,10 +186,11 @@ public class Map {
 		Node bestNode = new Node(9999, 9999);
 		for (int i = 0; i < possibleNode.length; i++) {
 			if (possibleNode[i].getStatus() == 5) {
-				if (distance(bestNode, current) > distance(possibleNode[i],
-						current)) {
+				if(bestNode.getStatus()==0){
 					bestNode = possibleNode[i];
-				} else if (bestNode.getStatus() != 5) {
+				}
+				else if (distance(bestNode, current) > distance(possibleNode[i],
+						current)) {
 					bestNode = possibleNode[i];
 				}
 			} else if (distance(bestNode, current) > distance(possibleNode[i],

@@ -8,7 +8,7 @@ import lejos.robotics.subsumption.Behavior;
 public class BallDetecting implements Behavior {
 
 	int count_red = 0;
-	public static int detectedBalls=0;
+	public static int detectedBalls = 0;
 
 	@Override
 	public boolean takeControl() {
@@ -47,7 +47,7 @@ public class BallDetecting implements Behavior {
 				Sputnik.robotMap.setBall();
 				if (increased == 0) {
 					count_red++;
-					if(count_red==1){
+					if (count_red == 1) {
 						System.exit(0);
 					}
 					increased = 1;
