@@ -52,12 +52,13 @@ public class Sputnik {
 		RConsole.openAny(10000);
 		pilot.setTravelSpeed(travelSpeed);
 		pilot.setRotateSpeed(rotateSpeed);
-		//Behavior pathFollowing = new PathFollowing();
-		Behavior pathFollowing = new PathSweeping();
+		Behavior pathFollowing = new PathFollowing();
+		Behavior pathSweeping = new PathSweeping();
 		Behavior pathPlanning = new PathPlanning();
 		Behavior ballDetecting = new BallDetecting();
+		Behavior localizing = new Localizing();
 		pathPlanning.action();
-		Behavior[] bArray = { pathFollowing, pathPlanning, ballDetecting };
+		Behavior[] bArray = { pathFollowing, pathPlanning, ballDetecting, pathSweeping, localizing };
 		Arbitrator arby = new Arbitrator(bArray);
 		arby.start();
 	}

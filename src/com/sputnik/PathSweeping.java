@@ -35,7 +35,7 @@ public class PathSweeping implements Behavior {
 		suppressed=false;
 	}
 
-	public void sweep() {
+	public static void sweep() {
 		// sweep left
 		float beforeLeftSweepAngle = Sputnik.opp.getPose().getHeading();
 		Sputnik.pilot.rotate(90, true);
@@ -86,7 +86,7 @@ public class PathSweeping implements Behavior {
 		}
 	}
 	
-	public  void align() {
+	public static  void align() {
 		if(Sputnik.lightSensor.getLightValue()<Sputnik.lightThreshold) {
 			return;
 		}
